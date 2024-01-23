@@ -22,17 +22,3 @@ const (
 	AssistantRole = "assistant"
 	SystemRole    = "system"
 )
-
-type Config struct {
-	AuthUrl      string
-	BaseUrl      string
-	ClientId     string
-	ClientSecret string
-	Scope        string
-	Insecure     bool
-}
-
-type OAuthResponse struct {
-	AccessToken string `json:"access_token"`
-	ExpiresAt   int64  `json:"expires_at"`
-}
