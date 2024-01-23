@@ -73,3 +73,14 @@ type Usage struct {
 	CompletionTokens int64 `json:"completion_tokens"`
 	TotalTokens      int64 `json:"total_tokens"`
 }
+
+type ModelListResponse struct {
+	Models []Model `json:"data"`
+	Type   string  `json:"object"`
+}
+
+type Model struct {
+	Id      string `json:"id"`
+	Type    string `json:"object"`
+	OwnedBy string `json:"owned_by"`
+}
