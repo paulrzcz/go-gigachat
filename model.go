@@ -6,6 +6,17 @@ import (
 	"net/http"
 )
 
+type ModelListResponse struct {
+	Models []Model `json:"data"`
+	Type   string  `json:"object"`
+}
+
+type Model struct {
+	Id      string `json:"id"`
+	Type    string `json:"object"`
+	OwnedBy string `json:"owned_by"`
+}
+
 func (c *Client) Models() (*ModelListResponse, error) {
 	return c.ModelsWithContext(context.Background())
 }
