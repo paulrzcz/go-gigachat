@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
-	c, err := NewClient("api-client-id", "api-client-secret")
+	c, err := NewInsecureClient("api-client-id", "api-client-secret")
 	if err != nil {
 		t.Errorf("NewClient() error = %v", err)
 	}
@@ -19,7 +19,7 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestAuth(t *testing.T) {
-	c, err := NewClient("api-client-id", "api-client-secret")
+	c, err := NewInsecureClient("api-client-id", "api-client-secret")
 	if err != nil {
 		t.Errorf("NewClient() error = %v", err)
 	}

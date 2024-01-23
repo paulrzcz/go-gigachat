@@ -2,6 +2,7 @@ package gigachat
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -25,13 +26,37 @@ func NewClient(clientId string, clientSecret string) (*Client, error) {
 		ClientId:     clientId,
 		ClientSecret: clientSecret,
 		Scope:        ScopeApiIndividual,
+		Insecure:     false,
 	}
 	return NewClientWithConfig(conf)
 }
 
+// NewInsecureClient creates a new GigaChat client with InsecureSkipVerify because GigaChat uses a weird certificate authority.
+func NewInsecureClient(clientId string, clientSecret string) (*Client, error) {
+	var conf = &Config{
+		AuthUrl:      AuthUrl,
+		BaseUrl:      BaseUrl,
+		ClientId:     clientId,
+		ClientSecret: clientSecret,
+		Scope:        ScopeApiIndividual,
+		Insecure:     true,
+	}
+	return NewClientWithConfig(conf)
+}
+
+// NewClientWithConfig creates a new GigaChat client with the specified configuration.
 func NewClientWithConfig(config *Config) (*Client, error) {
+	var client *http.Client
+	if config.Insecure {
+		customTransport := http.DefaultTransport.(*http.Transport).Clone()
+		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		client = &http.Client{Transport: customTransport}
+	} else {
+		client = &http.Client{}
+	}
+
 	return &Client{
-		client: &http.Client{},
+		client: client,
 		config: config,
 	}, nil
 }
@@ -62,7 +87,7 @@ func (c *Client) AuthWithContext(ctx context.Context) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code %d", resp.StatusCode)
+		return fmt.Errorf("unexpected status code %d %v", resp.StatusCode, resp.Status)
 	}
 
 	var oauth OAuthResponse

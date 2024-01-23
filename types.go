@@ -29,6 +29,7 @@ type Config struct {
 	ClientId     string
 	ClientSecret string
 	Scope        string
+	Insecure     bool
 }
 
 type OAuthResponse struct {
