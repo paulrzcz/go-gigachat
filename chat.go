@@ -52,7 +52,7 @@ func (c *Client) ChatWithContext(ctx context.Context, in *ChatRequest) (*ChatRes
 
 	reqBytes, _ := json.Marshal(in)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, ChatPath, bytes.NewReader(reqBytes))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.config.BaseUrl+ChatPath, bytes.NewReader(reqBytes))
 	if err != nil {
 		return nil, err
 	}

@@ -23,7 +23,7 @@ func (c *Client) Models() (*ModelListResponse, error) {
 
 func (c *Client) ModelsWithContext(ctx context.Context) (*ModelListResponse, error) {
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ModelsPath, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.config.BaseUrl+ModelsPath, nil)
 	if err != nil {
 		return nil, err
 	}
