@@ -111,7 +111,7 @@ func (c *Client) AuthWithContext(ctx context.Context) error {
 		return err
 	}
 
-	c.token.Set(oauth.AccessToken, time.Unix(oauth.ExpiresAt, 0))
+	c.token.Set(oauth.AccessToken, time.UnixMilli(oauth.ExpiresAt))
 	return nil
 }
 
