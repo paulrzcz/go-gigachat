@@ -8,15 +8,15 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type Client struct {
-	client   *http.Client
-	config   *Config
-	token    *string
-	exiresAt *int64
+	client *http.Client
+	config *Config
+	token  *Token
 }
 
 type Config struct {
@@ -60,18 +60,19 @@ func NewInsecureClient(clientId string, clientSecret string) (*Client, error) {
 
 // NewClientWithConfig creates a new GigaChat client with the specified configuration.
 func NewClientWithConfig(config *Config) (*Client, error) {
-	var client *http.Client
+	var customTransport *http.Transport
+
 	if config.Insecure {
-		customTransport := http.DefaultTransport.(*http.Transport).Clone()
-		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		client = &http.Client{Transport: customTransport}
-	} else {
-		client = &http.Client{}
+		if dt, ok := http.DefaultTransport.(*http.Transport); ok {
+			customTransport = dt.Clone()
+			customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		}
 	}
 
 	return &Client{
-		client: client,
+		client: &http.Client{Transport: customTransport},
 		config: config,
+		token:  new(Token),
 	}, nil
 }
 
@@ -80,12 +81,12 @@ func (c *Client) Auth() error {
 }
 
 func (c *Client) AuthWithContext(ctx context.Context) error {
-	if c.token != nil {
+	if c.token.Active() {
 		return nil
 	}
 
 	payload := strings.NewReader("scope=" + c.config.Scope)
-	req, err := http.NewRequestWithContext(ctx, "POST", c.config.AuthUrl+OAuthPath, payload)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.config.AuthUrl+OAuthPath, payload)
 	if err != nil {
 		return err
 	}
@@ -101,7 +102,7 @@ func (c *Client) AuthWithContext(ctx context.Context) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code %d %v", resp.StatusCode, resp.Status)
+		return fmt.Errorf("unexpected status code %d", resp.StatusCode)
 	}
 
 	var oauth OAuthResponse
@@ -110,14 +111,12 @@ func (c *Client) AuthWithContext(ctx context.Context) error {
 		return err
 	}
 
-	c.token = &oauth.AccessToken
-	c.exiresAt = &oauth.ExpiresAt
-
+	c.token.Set(oauth.AccessToken, time.UnixMilli(oauth.ExpiresAt))
 	return nil
 }
 
-func (c *Client) sendRequest(ctx context.Context, req *http.Request) (*http.Response, error) {
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", *c.token))
+func (c *Client) sendRequest(_ context.Context, req *http.Request) (*http.Response, error) {
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.token.Get()))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
