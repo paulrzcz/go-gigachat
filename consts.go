@@ -6,6 +6,7 @@ const (
 	OAuthPath  = "v2/oauth"
 	ModelsPath = "v1/models"
 	ChatPath   = "v1/chat/completions"
+	Files      = "v1/files"
 )
 
 const (

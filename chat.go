@@ -4,7 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/pkg/errors"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 type ChatRequest struct {
@@ -49,7 +54,6 @@ func (c *Client) Chat(in *ChatRequest) (*ChatResponse, error) {
 }
 
 func (c *Client) ChatWithContext(ctx context.Context, in *ChatRequest) (*ChatResponse, error) {
-
 	reqBytes, _ := json.Marshal(in)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.config.BaseUrl+ChatPath, bytes.NewReader(reqBytes))

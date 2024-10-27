@@ -6,11 +6,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Client struct {
@@ -23,6 +22,7 @@ type Config struct {
 	AuthUrl      string
 	BaseUrl      string
 	ClientId     string
+	Authkey      string
 	ClientSecret string
 	Scope        string
 	Insecure     bool
@@ -54,6 +54,17 @@ func NewInsecureClient(clientId string, clientSecret string) (*Client, error) {
 		ClientSecret: clientSecret,
 		Scope:        ScopeApiIndividual,
 		Insecure:     true,
+	}
+	return NewClientWithConfig(conf)
+}
+
+func NewInsecureClientWithAuthKey(authKey string) (*Client, error) {
+	var conf = &Config{
+		AuthUrl:  AuthUrl,
+		BaseUrl:  BaseUrl,
+		Authkey:  authKey,
+		Scope:    ScopeApiIndividual,
+		Insecure: true,
 	}
 	return NewClientWithConfig(conf)
 }
@@ -93,7 +104,12 @@ func (c *Client) AuthWithContext(ctx context.Context) error {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 	req.Header.Add("RqUID", uuid.NewString())
-	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(c.config.ClientId+":"+c.config.ClientSecret)))
+
+	if c.config.Authkey == "" {
+		c.config.Authkey = base64.StdEncoding.EncodeToString([]byte(c.config.ClientId + ":" + c.config.ClientSecret))
+	}
+
+	req.Header.Set("Authorization", "Basic "+c.config.Authkey)
 
 	resp, err := c.client.Do(req)
 	if err != nil {
