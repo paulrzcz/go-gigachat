@@ -51,7 +51,7 @@ func TestAuth(t *testing.T) {
 
 		n := time.Now().Add(time.Minute)
 
-		httpmock.RegisterResponder(http.MethodPost, c.config.AuthUrl+OAuthPath, httpmock.NewStringResponder(http.StatusOK, fmt.Sprintf(`{"access_token": "test", "expires_at": %d}`, n.Unix())))
+		httpmock.RegisterResponder(http.MethodPost, c.config.AuthUrl+OAuthPath, httpmock.NewStringResponder(http.StatusOK, fmt.Sprintf(`{"access_token": "test", "expires_at": %d}`, n.UnixMilli())))
 
 		c.client = http.DefaultClient
 		err = c.Auth()
