@@ -22,7 +22,7 @@ type Config struct {
 	AuthUrl      string
 	BaseUrl      string
 	ClientId     string
-	Authkey      string
+	AuthKey      string
 	ClientSecret string
 	Scope        string
 	Insecure     bool
@@ -62,7 +62,7 @@ func NewInsecureClientWithAuthKey(authKey string) (*Client, error) {
 	var conf = &Config{
 		AuthUrl:  AuthUrl,
 		BaseUrl:  BaseUrl,
-		Authkey:  authKey,
+		AuthKey:  authKey,
 		Scope:    ScopeApiIndividual,
 		Insecure: true,
 	}
@@ -105,11 +105,11 @@ func (c *Client) AuthWithContext(ctx context.Context) error {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Add("RqUID", uuid.NewString())
 
-	if c.config.Authkey == "" {
-		c.config.Authkey = base64.StdEncoding.EncodeToString([]byte(c.config.ClientId + ":" + c.config.ClientSecret))
+	if c.config.AuthKey == "" {
+		c.config.AuthKey = base64.StdEncoding.EncodeToString([]byte(c.config.ClientId + ":" + c.config.ClientSecret))
 	}
 
-	req.Header.Set("Authorization", "Basic "+c.config.Authkey)
+	req.Header.Set("Authorization", "Basic "+c.config.AuthKey)
 
 	resp, err := c.client.Do(req)
 	if err != nil {

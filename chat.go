@@ -4,12 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/pkg/errors"
-	"io"
-	"mime/multipart"
 	"net/http"
-	"os"
-	"path/filepath"
 )
 
 type ChatRequest struct {
