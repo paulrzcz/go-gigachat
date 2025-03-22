@@ -23,3 +23,12 @@ const (
 	AssistantRole = "assistant"
 	SystemRole    = "system"
 )
+
+const (
+	GIGACHAT_2_LITE = "GigaChat-2"
+	GIGACHAT_2_PRO  = "GigaChat-2-Pro"
+	GIGACHAT_2_MAX  = "GigaChat-2-Max"
+	GIGACHAT_1_LITE = "GigaChat"
+	GIGACHAT_1_PRO  = "GigaChat-Pro"
+	GIGACHAT_1_MAX  = "GigaChat-Max"
+)
