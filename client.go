@@ -105,7 +105,7 @@ func (c *Client) AuthWithContext(ctx context.Context) error {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Add("RqUID", uuid.NewString())
 
-	if c.config.AuthKey == "" {
+	if c.config.AuthKey == "" && (c.config.ClientId != "" && c.config.ClientSecret != "") {
 		c.config.AuthKey = base64.StdEncoding.EncodeToString([]byte(c.config.ClientId + ":" + c.config.ClientSecret))
 	}
 
