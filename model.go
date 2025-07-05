@@ -17,6 +17,30 @@ type Model struct {
 	OwnedBy string `json:"owned_by"`
 }
 
+type FileResponse struct {
+	Bytes        int    `json:"bytes,omitempty"`
+	CreatedAt    int    `json:"created_at,omitempty"`
+	Filename     string `json:"filename,omitempty"`
+	Id           string `json:"id,omitempty"`
+	Object       string `json:"object,omitempty"`
+	Purpose      string `json:"purpose,omitempty"`
+	AccessPolicy string `json:"access_policy,omitempty"`
+	Status       int    `json:"status,omitempty"`
+	Message      string `json:"message,omitempty"`
+}
+
+type FilesInfo struct {
+	Data []struct {
+		Id           string `json:"id"`
+		Object       string `json:"object"`
+		Bytes        int    `json:"bytes"`
+		AccessPolicy string `json:"access_policy"`
+		CreatedAt    int    `json:"created_at"`
+		Filename     string `json:"filename"`
+		Purpose      string `json:"purpose"`
+	} `json:"data"`
+}
+
 func (c *Client) Models() (*ModelListResponse, error) {
 	return c.ModelsWithContext(context.Background())
 }
