@@ -20,8 +20,9 @@ type ChatRequest struct {
 }
 
 type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role        string   `json:"role"`
+	Content     string   `json:"content"`
+	Attachments []string `json:"attachments,omitempty"`
 }
 
 type ChatResponse struct {
